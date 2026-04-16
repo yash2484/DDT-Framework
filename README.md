@@ -1,123 +1,262 @@
-# 🚀 Autonomous DDT Framework  
-### Multi-Agent Data-Driven Testing using AutoGen
+# 🚀 QA Testing Automation Framework (AutoGen + RAG + ChromaDB)
 
-An **AI-powered, multi-agent testing framework** that automates the complete QA lifecycle — from **synthetic test data generation → test script creation → execution → self-healing**.
+An **autonomous, multi-agent QA testing framework** that automates the entire testing lifecycle for a **User Registration API** using:
 
-Built using **Microsoft AutoGen**, this system simulates a real-world QA team with specialized agents collaborating autonomously.
+* 🤖 Microsoft AutoGen (multi-agent orchestration)
+* 🧠 RAG (Retrieval-Augmented Generation)
+* 🗂️ ChromaDB (vector database)
+* 🧪 Pytest (test execution)
+
+---
 
 ## 📌 Overview
 
-Traditional QA pipelines are:
-- Manual  
-- Time-consuming  
-- Hard to scale  
+This project implements a **fully autonomous QA pipeline** powered by **4 specialized AI agents**, each responsible for a specific stage of testing:
 
-This project solves that by introducing a **self-operating QA system powered by LLM agents**.
+| Agent                   | Role                                             |
+| ----------------------- | ------------------------------------------------ |
+| **Data Architect**      | Generates synthetic test data + builds RAG index |
+| **Test Case Generator** | Creates pytest scripts using RAG                 |
+| **Validator**           | Ensures correctness via multi-pass validation    |
+| **Test Runner**         | Executes tests and generates reports             |
 
-### 💡 What it does:
-- Generates realistic test datasets  
-- Writes pytest automation scripts  
-- Executes tests automatically  
-- Fixes failures via a self-healing loop  
+The system produces a final output:
+
+```
+workspace/test_results.csv
+```
+
+Containing per-test:
+
+* Expected vs Actual results
+* Pass/Fail status
+* Failure reasons
+
+---
 
 ## 🧠 Architecture
 
-```text
-UserProxy (Test Runner)
-        ↓
-Data Architect → Generates CSV test data
-        ↓
-SDET Expert → Writes pytest script
-        ↓
-Test Runner → Executes tests
-        ↓
-(Self-Healing Loop if errors)
+```
+SEED_MESSAGE
+    │
+    ▼
+data_architect ──► pipeline_runner
+                        │
+                        ▼
+          test_case_generator ──► validator
+                   ▲                │
+                   │◄───────────────┘
+                        (max 3 iterations)
+                        │
+                        ▼
+                   test_runner
+                        │
+                        ▼
+                  TESTS_COMPLETE
 ```
 
-## 🤖 Agents
+---
 
-### 🏗️ Data Architect
-- Generates synthetic test data (CSV)  
-- Follows schema + validation rules  
-- Covers edge cases automatically  
+## ⚙️ Tech Stack
 
-### 🧪 SDET Expert
-- Writes pytest automation scripts  
-- Uses parameterized testing  
-- Simulates API behavior  
+* **AutoGen** – Multi-agent orchestration
+* **ChromaDB** – Vector storage for RAG
+* **Sentence Transformers** – Local embeddings
+* **Pytest** – Test execution
+* **Pandas** – Data handling
+* **OpenAI GPT-4o** – Reasoning + validation
 
-### ⚙️ Test Runner (UserProxy)
-- Executes generated code  
-- Captures errors  
-- Routes failures back for fixes  
-
-## 🔁 Self-Healing Loop
-
-The core innovation of this framework:
-
-1. Test execution fails  
-2. Error traceback captured  
-3. Sent back to SDET agent  
-4. Script rewritten automatically  
-5. Re-run until success  
-
-✅ Fully autonomous debugging loop  
+---
 
 ## 📂 Project Structure
 
-ddt_framework/
-│
-├── main.py
-├── .env
-├── workspace/
-│   ├── registration_test_data.csv
-│   └── test_registration_api.py
-└── README.md
+```
+QA-Testing-Automation/
+├── __main__.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── workspace/
+    ├── chroma_db/
+    ├── registration_test_data.csv
+    ├── test_registration_api.py
+    └── test_results.csv
+```
 
+---
 
-## 🧪 Example Test Logic
+## 🚀 Features
 
-Validation rules implemented:
-- Age ≥ 18  
-- Email contains @ and .com  
-- Password ≥ 8 characters  
+* ✅ Fully autonomous QA pipeline
+* 🔁 Multi-agent collaboration with state machine routing
+* 🧠 RAG-powered test generation
+* 🔍 3-pass validation loop for high accuracy
+* 📊 Structured CSV test reports
+* 💡 Deterministic execution with signal-based control
 
-## 🧠 Key Concepts Used
+---
 
-- Multi-Agent Systems (AutoGen)  
-- GroupChat Orchestration  
-- Custom Speaker Selection  
-- Code Execution Agents  
-- Self-Healing Pipelines  
+## 🛠️ Setup Instructions
 
-## 🚨 Common Issues
+### 1. Prerequisites
 
-| Issue | Cause | Fix |
-|------|------|-----|
-| Infinite loop | No termination signal | Ensure TESTS_PASSED |
-| CSV incorrect | Weak seed prompt | Define schema clearly |
-| Pandas error | Missing dependency | Install or switch to csv |
-| Loop not healing | Traceback missing | Ensure logs are captured |
+* Python 3.10+
+* Git
+* OpenAI API Key
 
-## 💡 Why This Project Matters
+---
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/yash2484/QA-Testing-Automation.git
+cd QA-Testing-Automation
+```
+
+---
+
+### 3. Create Virtual Environment
+
+```bash
+python -m venv .venv
+
+# Activate
+# Windows
+.venv\Scripts\activate
+
+# Mac/Linux
+source .venv/bin/activate
+```
+
+---
+
+### 4. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 5. Configure Environment Variables
+
+Create a `.env` file:
+
+```
+OPENAI_API_KEY=your_api_key_here
+```
+
+---
+
+### 6. Run the Pipeline
+
+```bash
+python __main__.py
+```
+
+---
+
+## 🔄 Pipeline Workflow
+
+### Step 1 — Data Architect
+
+* Generates synthetic dataset (20 rows)
+* Stores embeddings in ChromaDB
+
+### Step 2 — Test Case Generator
+
+* Retrieves data via RAG
+* Writes pytest automation script
+
+### Step 3 — Validator
+
+* Validates script using:
+
+  * Column correctness
+  * Business logic
+  * Coverage
+  * Assertions
+  * Data alignment
+
+### Step 4 — Test Runner
+
+* Executes tests
+* Generates `test_results.csv`
+
+---
+
+## 📊 Output Example
+
+| test_id | expected_status | actual_status | outcome  |
+| ------- | --------------- | ------------- | -------- |
+| 1       | PASS            | PASS          | MATCH    |
+| 2       | FAIL            | PASS          | MISMATCH |
+
+---
+
+## 🔁 Validation Loop
+
+* Max **3 iterations**
+* Controlled via signal words:
+
+  * `SCRIPT_READY`
+  * `REVISION_NEEDED`
+  * `SCRIPT_VALIDATED`
+
+---
+
+## 🧩 Key Concepts
+
+### 🔹 RAG (Retrieval-Augmented Generation)
+
+* Agents retrieve relevant test data from ChromaDB
+* Improves accuracy of generated test cases
+
+### 🔹 State Machine Routing
+
+* Deterministic agent flow
+* Based on signal words like:
+
+  * `DATA_INDEXED`
+  * `SCRIPT_READY`
+  * `TESTS_COMPLETE`
+
+### 🔹 Autonomous Execution
+
+* No human input required
+* Fully self-correcting system
+
+---
+
+## ⚠️ Troubleshooting
+
+| Issue             | Fix                                          |
+| ----------------- | -------------------------------------------- |
+| Infinite loop     | Ensure `TESTS_COMPLETE` is printed correctly |
+| ChromaDB error    | Delete `workspace/chroma_db/`                |
+| No results in CSV | Check pytest output parsing                  |
+| Module errors     | Activate `.venv` and reinstall requirements  |
+
+---
+
+## 📈 Why This Project Matters
 
 This project demonstrates:
-- Agentic AI systems  
-- Autonomous workflows  
-- Production-grade orchestration  
-- AI-driven software testing  
 
-## 🎯 Use Cases
+* Multi-agent AI system design
+* Real-world QA automation
+* RAG integration in testing
+* Autonomous decision-making pipelines
 
-- Automated QA pipelines  
-- API testing frameworks  
-- CI/CD intelligent testing  
-- AI-driven DevOps tools  
+---
 
-## 🧩 Future Improvements
+## 🔮 Future Improvements
 
-- Docker sandbox execution  
-- Real API integration  
-- CI/CD integration (GitHub Actions)  
-- DeepEval integration for test quality scoring  
-- UI dashboard for monitoring  
+* API integration (real endpoints instead of mock)
+* CI/CD pipeline integration (GitHub Actions)
+* Dashboard for test results (Streamlit)
+* Support for multiple APIs
+* Advanced failure analysis using LLMs
+
+
+---
